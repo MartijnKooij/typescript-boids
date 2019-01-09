@@ -1,0 +1,12 @@
+body, body * {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+}
+
+.content {
+    margin: 0 auto;
+    width: 500px;
+}
+
+canvas {
+    border: solid 1px lightblue;
+}
