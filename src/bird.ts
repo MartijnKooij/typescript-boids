@@ -14,11 +14,24 @@ export class Bird {
         const newX = this.location.left + this.velocity.x;
         const newY = this.location.top + this.velocity.y;
 
-        if (newX <= boundingBox.left || newX + this.location.width >= boundingBox.left + boundingBox.width) {
+        var noise = Math.floor(Math.random() * 4) * (Math.floor(Math.random() * 2) === 1 ? 1 : -1);
+
+        if (newX <= boundingBox.left) {
             this.velocity.x = -1 * this.velocity.x;
+            this.velocity.y += noise;
         }
-        if (newY <= boundingBox.top || newY + this.location.height >= boundingBox.top + boundingBox.height) {
+        if (newX + this.location.width >= boundingBox.left + boundingBox.width) {
+            this.velocity.x = -1 * this.velocity.x;
+            this.velocity.y += noise;
+        }
+
+        if (newY <= boundingBox.top) {
             this.velocity.y = -1 * this.velocity.y;
+            this.velocity.x += noise;
+        }
+        if (newY + this.location.height >= boundingBox.top + boundingBox.height) {
+            this.velocity.y = -1 * this.velocity.y;
+            this.velocity.x += noise;
         }
 
         this.location.left += this.velocity.x;
@@ -48,9 +61,6 @@ export class Bird {
     }
 
     private getAngle(): number {
-        if (this.velocity.x < 0) {
-            return Math.PI;
-        }
-        return Math.PI * 2;
+        return 360 - Math.round(Math.atan2(this.velocity.x, this.velocity.y));
     }
 }
