@@ -61,6 +61,6 @@ export class Bird {
     }
 
     private getAngle(): number {
-        return 360 - Math.round(Math.atan2(this.velocity.x, this.velocity.y));
+        return Math.atan2(this.velocity.y, this.velocity.x);
     }
 }
