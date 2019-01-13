@@ -34,6 +34,9 @@ export class Bird {
             this.velocity.x += noise;
         }
 
+        this.velocity.x = Math.min(Math.max(this.velocity.x, -5), 5);
+        this.velocity.y = Math.min(Math.max(this.velocity.y, -5), 5);
+
         this.location.left += this.velocity.x;
         this.location.top += this.velocity.y;
     }
