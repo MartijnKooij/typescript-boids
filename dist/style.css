@@ -4,9 +4,10 @@ body, body * {
 
 .content {
     margin: 0 auto;
-    width: 500px;
+    width: 800px;
 }
 
 canvas {
     border: solid 1px lightblue;
+    background-color: lightblue;
 }

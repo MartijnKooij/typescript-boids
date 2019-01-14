@@ -1,18 +1,26 @@
 import { Point } from './point';
-import { Rect } from './rect';
+import { Rectangle } from './rectangle';
+import { Color } from './color';
 
 export class Bird {
-    private location: Rect;
+    public id: number;
+
+    private location: Rectangle;
     private velocity: Point;
     private velocityMultiplier: number;
 
-    constructor() {
-        this.location = { left: Math.floor(Math.random() * 490), top: Math.floor(Math.random() * 490), width: 12, height: 6 };
+    private color = Color.getRandomColor();
+
+    constructor(id: number) {
+        this.id = id;
+        this.location = { left: Math.floor(Math.random() * 490), top: Math.floor(Math.random() * 490), width: 16, height: 8 };
         this.velocity = { x: 3, y: 0 };
         this.velocityMultiplier = 0.5;
     }
 
-    public move(boundingBox: Rect) {
+    public move(boundingBox: Rectangle, allBirds: Bird[]) {
+        const otherBirds = allBirds.filter(b => b.id != this.id);
+
         let bounced = this.moveWithinBoundaries(boundingBox);
         this.modifySpeedAfterBounce(bounced);
 
@@ -35,6 +43,7 @@ export class Bird {
         context.translate(centerX, centerY);
         context.rotate(this.velocityToAngle());
         context.moveTo(-halfWidth, -halfHeight);
+        context.fillStyle = this.color;
         context.lineTo(-halfWidth + this.location.width, -halfHeight + halfHeight);
         context.lineTo(-halfWidth, -halfHeight + this.location.height);
         context.lineTo(-halfWidth + this.location.width / 3, -halfHeight + halfHeight);
@@ -53,7 +62,7 @@ export class Bird {
         this.velocity.y *= this.velocityMultiplier;
     }
 
-    private moveWithinBoundaries(boundingBox: Rect) {
+    private moveWithinBoundaries(boundingBox: Rectangle) {
         const newX = this.location.left + this.velocity.x;
         const newY = this.location.top + this.velocity.y;
         let bounced = false;
