@@ -8,23 +8,26 @@ export class App {
     private context: CanvasRenderingContext2D;
     private lastFrameTimeMs = 0;
     private canvasSize: Rect;
-    private bird: Bird;
+    private birds: Bird[] = [];
 
     public start(canvas: HTMLCanvasElement) {
         this.canvasSize = { left: 0, top: 0, width: canvas.width, height: canvas.height };
         this.context = canvas.getContext('2d');
-        this.bird = new Bird();
+
+        for (let b = 0; b < 10; b++) {
+            this.birds.push(new Bird());
+        }
 
         requestAnimationFrame(this.renderLoop);
     }
 
     private drawBirds(): any {
         this.context.clearRect(0, 0, this.canvasSize.width, this.canvasSize.height);
-        this.bird.draw(this.context);
+        this.birds.forEach(bird => bird.draw(this.context));
     }
 
     private updateBirds(): any {
-        this.bird.move(this.canvasSize);
+        this.birds.forEach(bird => bird.move(this.canvasSize));
     }
 
     private renderLoop = (timestamp: number) => {
