@@ -1,5 +1,5 @@
+import { Behavior } from './behaviour';
 import { Bird } from './bird';
-import { Point } from './point';
 import { Rectangle } from './rectangle';
 
 export class App {
@@ -11,23 +11,27 @@ export class App {
     private birds: Bird[] = [];
 
     public start(canvas: HTMLCanvasElement) {
-        this.canvasSize = { left: 0, top: 0, width: canvas.width, height: canvas.height };
+        this.canvasSize = new Rectangle(0, 0, canvas.width, canvas.height);
         this.context = canvas.getContext('2d');
 
         for (let b = 0; b < 10; b++) {
-            this.birds.push(new Bird(b));
+            this.birds.push(new Bird(b, this.canvasSize));
         }
 
         requestAnimationFrame(this.renderLoop);
     }
 
+    public updateBehavior(behavior: Behavior) {
+        this.birds.forEach((bird) => bird.updateBehavior(behavior));
+    }
+
     private drawBirds(): any {
         this.context.clearRect(0, 0, this.canvasSize.width, this.canvasSize.height);
-        this.birds.forEach(bird => bird.draw(this.context));
+        this.birds.forEach((bird) => bird.draw(this.context));
     }
 
     private updateBirds(): any {
-        this.birds.forEach(bird => bird.move(this.canvasSize, this.birds));
+        this.birds.forEach((bird) => bird.move(this.birds));
     }
 
     private renderLoop = (timestamp: number) => {
