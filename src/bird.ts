@@ -30,7 +30,7 @@ export class Bird {
         this.location = new Rectangle(startX, startY, defaultWidth, defaultHeight);
         this.previousVelocity = { x: 3, y: 0 };
         this.velocity = { x: Math.floor(Math.random() * 5), y: Math.floor(Math.random() * 5) };
-        this.velocityMultiplier = 0.5;
+        this.velocityMultiplier = 1.0;
         this.ensureVelocityRange();
     }
 
@@ -47,9 +47,7 @@ export class Bird {
 
         const bounced = this.moveWithinBoundaries();
 
-        if (this.behavior.slowDownOnBounce) {
-            this.modifySpeedAfterBounce(bounced);
-        }
+        this.modifySpeedAfterBounce(bounced);
 
         this.ensureVelocityRange();
 
@@ -79,6 +77,7 @@ export class Bird {
         const halfHeight = this.location.height / 2;
         const centerX = this.location.left + halfWidth;
         const centerY = this.location.top + halfHeight;
+
         context.translate(centerX, centerY);
         context.rotate(this.velocityToAngle());
         context.moveTo(-halfWidth, -halfHeight);
@@ -91,23 +90,14 @@ export class Bird {
     }
 
     private modifySpeedAfterBounce(bounced: boolean) {
-        if (bounced) {
-            this.velocityMultiplier = 0.5;
+        if (bounced && this.behavior.slowDownOnBounce) {
+            this.velocityMultiplier = 1.0;
         } else {
             this.velocityMultiplier += 0.001;
         }
 
-        const newVelocityX = this.velocity.x * this.velocityMultiplier;
-        const newVelocityY = this.velocity.y * this.velocityMultiplier;
-        const newX = this.location.left + newVelocityX;
-        const newY = this.location.top + newVelocityY;
-
-        if (this.isInXBounds(newX)) {
-            this.velocity.x = newVelocityX;
-        }
-        if (this.isInYBounds(newY)) {
-            this.velocity.y = newVelocityY;
-        }
+        this.velocity.x *= this.velocityMultiplier;
+        this.velocity.y *= this.velocityMultiplier;
     }
 
     private moveWithinBoundaries() {
@@ -117,14 +107,14 @@ export class Bird {
 
         let bounced = false;
 
-        if (this.isInXBounds(newX)) {
-            this.velocity.x = -1 * this.velocity.x;
+        if (!this.isInXBounds(newX)) {
+            this.velocity.x = -1 * (this.velocity.x / 10);
             this.velocity.y += noise;
             bounced = true;
         }
 
-        if (this.isInYBounds(newY)) {
-            this.velocity.y = -1 * this.velocity.y;
+        if (!this.isInYBounds(newY)) {
+            this.velocity.y = -1 * (this.velocity.y / 10);
             this.velocity.x += noise;
             bounced = true;
         }
@@ -133,34 +123,29 @@ export class Bird {
     }
 
     private ensureVelocityRange() {
-        const newVelocityX = Math.min(Math.max(this.velocity.x, -6), 6);
-        const newVelocityY = Math.min(Math.max(this.velocity.y, -6), 6);
+        const newVelocityX = Math.min(Math.max(this.velocity.x, -16), 16);
+        const newVelocityY = Math.min(Math.max(this.velocity.y, -16), 16);
         const newX = this.location.left + newVelocityX;
         const newY = this.location.top + newVelocityY;
 
-        if (this.isInXBounds(newX)) {
+        if (this.isInXBounds(newX) && this.isInYBounds(newY)) {
             this.velocity.x = newVelocityX;
-        } else {
-            this.velocity = this.previousVelocity;
-        }
-
-        if (this.isInYBounds(newY)) {
             this.velocity.y = newVelocityY;
         } else {
             this.velocity = this.previousVelocity;
         }
 
         if (this.velocity.x === 0 && this.velocity.y === 0) {
-            this.velocity = this.previousVelocity;
+            this.velocity = { x: Math.floor(Math.random() * 5), y: Math.floor(Math.random() * 5) };
         }
     }
 
-    private isInYBounds(newY: number) {
-        return newY <= this.boundingBox.top || newY + this.location.height >= this.boundingBox.top + this.boundingBox.height;
+    private isInXBounds(newX: number) {
+        return newX > this.boundingBox.left && newX + this.location.width < this.boundingBox.left + this.boundingBox.width;
     }
 
-    private isInXBounds(newX: number) {
-        return newX <= this.boundingBox.left || newX + this.location.width >= this.boundingBox.left + this.boundingBox.width;
+    private isInYBounds(newY: number) {
+        return newY > this.boundingBox.top && newY + this.location.height < this.boundingBox.top + this.boundingBox.height;
     }
 
     private velocityToAngle(): number {

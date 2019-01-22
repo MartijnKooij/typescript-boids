@@ -1,6 +1,6 @@
 export class Color {
     public static getRandomColor(): string {
-        return this.colors[Math.floor(Math.random() * this.colors.length)];
+        return this.colors[0]; // Math.floor(Math.random() * this.colors.length)];
     }
 
     private static colors = [

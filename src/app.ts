@@ -14,7 +14,7 @@ export class App {
         this.canvasSize = new Rectangle(0, 0, canvas.width, canvas.height);
         this.context = canvas.getContext('2d');
 
-        for (let b = 0; b < 10; b++) {
+        for (let b = 0; b < 1; b++) {
             this.birds.push(new Bird(b, this.canvasSize));
         }
 
