@@ -5,7 +5,9 @@ module.exports = {
     devtool: 'inline-source-map',
     mode: 'development',
     devServer: {
-        contentBase: './dist'
+        static: {
+            directory: './dist/'
+        }
     },
     module: {
         rules: [
