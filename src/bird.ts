@@ -9,6 +9,8 @@ export class Bird {
     public location: Rectangle;
     public velocity: Point;
 
+    private readonly defaultVelocity = 5;
+
     private behavior: Behavior;
     private boundingBox: Rectangle;
 
@@ -29,16 +31,16 @@ export class Bird {
 
         this.location = new Rectangle(startX, startY, defaultWidth, defaultHeight);
         this.previousVelocity = { x: 3, y: 0 };
-        this.velocity = { x: Math.floor(Math.random() * 5), y: Math.floor(Math.random() * 5) };
+        this.velocity = { x: Math.floor(Math.random() * this.defaultVelocity), y: Math.floor(Math.random() * this.defaultVelocity) };
         this.velocityMultiplier = 1.0;
         this.ensureVelocityRange();
     }
 
-    public updateBehavior(behavior: Behavior) {
+    updateBehavior(behavior: Behavior) {
         this.behavior = behavior;
     }
 
-    public move(allBirds: Bird[]) {
+    move(allBirds: Bird[], delta: number) {
         this.previousVelocity = this.velocity;
 
         const otherBirds = allBirds.filter((b) => b.id !== this.id);
@@ -51,11 +53,14 @@ export class Bird {
 
         this.ensureVelocityRange();
 
-        this.location.left += this.velocity.x;
-        this.location.top += this.velocity.y;
+        // Adjust the scaling factor if needed
+        const deltaInSeconds = delta / 1000;
+        const scalingFactor = 10;
+        this.location.left += this.velocity.x * deltaInSeconds * scalingFactor;
+        this.location.top += this.velocity.y * deltaInSeconds * scalingFactor;
     }
 
-    public draw(context: CanvasRenderingContext2D) {
+    draw(context: CanvasRenderingContext2D) {
         context.save();
         context.beginPath();
         this.drawBird(context);
@@ -136,7 +141,8 @@ export class Bird {
         }
 
         if (this.velocity.x === 0 && this.velocity.y === 0) {
-            this.velocity = { x: Math.floor(Math.random() * 5), y: Math.floor(Math.random() * 5) };
+            this.velocity = { x: Math.floor(Math.random() * this.defaultVelocity), y: Math.floor(Math.random() * this.defaultVelocity) };
+            this.ensureVelocityRange();
         }
     }
 

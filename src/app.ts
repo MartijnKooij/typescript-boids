@@ -3,7 +3,7 @@ import { Bird } from './bird';
 import { Rectangle } from './rectangle';
 
 export class App {
-    private readonly maxFPS = 30;
+    private readonly maxBirds = 1;
 
     private context: CanvasRenderingContext2D;
     private lastFrameTimeMs = 0;
@@ -14,7 +14,7 @@ export class App {
         this.canvasSize = new Rectangle(0, 0, canvas.width, canvas.height);
         this.context = canvas.getContext('2d');
 
-        for (let b = 0; b < 1; b++) {
+        for (let b = 0; b < this.maxBirds; b++) {
             this.birds.push(new Bird(b, this.canvasSize));
         }
 
@@ -30,18 +30,15 @@ export class App {
         this.birds.forEach((bird) => bird.draw(this.context));
     }
 
-    private updateBirds(): any {
-        this.birds.forEach((bird) => bird.move(this.birds));
+    private updateBirds(delta: number): any {
+        this.birds.forEach((bird) => bird.move(this.birds, delta));
     }
 
     private renderLoop = (timestamp: number) => {
-        if (timestamp < this.lastFrameTimeMs + (1000 / this.maxFPS)) {
-            requestAnimationFrame(this.renderLoop);
-            return;
-        }
+        const delta = timestamp - this.lastFrameTimeMs;
         this.lastFrameTimeMs = timestamp;
 
-        this.updateBirds();
+        this.updateBirds(delta);
         this.drawBirds();
 
         requestAnimationFrame(this.renderLoop);

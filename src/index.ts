@@ -10,7 +10,7 @@ setTimeout(() => {
     updateBehavior();
 
     document.querySelectorAll('input').forEach((input) => {
-        input.addEventListener('change', (event) => {
+        input.addEventListener('change', () => {
             updateBehavior();
         });
     });

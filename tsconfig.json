@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "module":"es6",
+    "module": "es6",
     "esModuleInterop": true,
-    "target": "es5",
+    "target": "ES2024",
     "noImplicitAny": true,
     "moduleResolution": "node",
     "sourceMap": true,
